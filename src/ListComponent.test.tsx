@@ -3,7 +3,7 @@ import { ListComponent } from "./ListComponent";
 import "@testing-library/jest-dom";
 
 describe("", () => {
-  test("List component should render", () => {
+  test("ListComponent should render", () => {
     const headerText = "My Header";
     const valuesArray = ["Value 1", "Value 2", "Value 3"];
     render(<ListComponent header={headerText} values={valuesArray} />);
