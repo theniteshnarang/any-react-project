@@ -16,7 +16,9 @@ const NEW_BAR = {
 
 const ProgressBar = () => {
   const [bars, setBars] = useState<Bar[]>([]);
-  const timerId = useRef<NodeJS.Timeout>();
+  const barValueId = useRef<NodeJS.Timeout>();
+  const secondsId = useRef<NodeJS.Timeout>();
+  const [seconds, setSeconds] = useState<number>(0);
   const renderCount = useRef(0);
 
   renderCount.current += 1;
@@ -34,47 +36,49 @@ const ProgressBar = () => {
 
   const increaseBarValue = (id: number) => {
     setBars((pBars) =>
-      pBars.map((bar) => {
-        if (bar.id === id) {
-          return {
-            ...bar,
-            value: bar.value < 100 ? bar.value + 10 : bar.value,
-            isFilled: bar.value + 10 === 100,
-          };
-        } else {
-          return bar;
-        }
-      })
+      pBars.map((bar) =>
+        bar.id === id
+          ? {
+              ...bar,
+              value: bar.value < 100 ? bar.value + 10 : bar.value,
+              isFilled: bar.value + 10 === 100,
+            }
+          : bar
+      )
     );
   };
 
   const onClickAddBar = () => {
-    const barAdded = addNewBar();
-    if (bars.length === 0) {
-      timerId.current = setInterval(() => {
-        increaseBarValue(barAdded.id);
-      }, 200);
+    addNewBar();
+    if (secondsId.current) {
+      clearInterval(secondsId.current);
     }
+    secondsId.current = setInterval(() => {
+      setSeconds((p) => p + 1);
+    }, 1000);
   };
 
   useEffect(() => {
     if (bars) {
-      const matchedBarIndex = bars?.findLastIndex((bar) => bar.isFilled);
+      const matchedBarIndex = bars?.findIndex((bar) => !bar.isFilled);
       const matchedBar = bars[matchedBarIndex];
-      if (matchedBar && matchedBar.isFilled) {
-        clearInterval(timerId.current);
-        const nextBar = bars[matchedBarIndex + 1];
-        if (nextBar) {
-          timerId.current = setInterval(() => {
-            increaseBarValue(nextBar.id);
-          }, 200);
-        }
+      if (matchedBar && !matchedBar.isFilled) {
+        clearInterval(barValueId.current);
+        barValueId.current = setInterval(() => {
+          increaseBarValue(matchedBar.id);
+        }, 200);
+      }
+
+      if (matchedBarIndex === -1) {
+        clearInterval(barValueId.current);
+        clearInterval(secondsId.current);
       }
     }
   }, [bars]);
 
   return (
     <>
+      <p>Time Elapsed: {seconds} seconds</p>
       <p>Render Count: {renderCount.current}</p>
       <button
         onClick={onClickAddBar}
