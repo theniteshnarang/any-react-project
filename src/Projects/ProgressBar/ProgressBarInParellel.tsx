@@ -48,12 +48,10 @@ const ProgressBarInParellel = () => {
     }, 200);
   };
 
-  console.log({ bars, barValueId });
-
   useEffect(() => {
     if (bars) {
-      Object.keys(barValueId.current).forEach((val) => {
-        const bar = bars.find((b) => b.id === +val);
+      Object.keys(barValueId.current).forEach((barId) => {
+        const bar = bars.find((b) => b.id === +barId);
         if (bar?.id && bar.isFilled) {
           clearInterval(barValueId.current[bar?.id]);
         }
