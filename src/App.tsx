@@ -1,11 +1,12 @@
 import { Container } from "./layout";
-import ProgressBarInParellel from "./Projects/ProgressBar/ProgressBarInParellel";
-// import ProgressBarInSeries from "./Projects/ProgressBar/ProgressBarInSeries";
+import AnalogClock from "./Projects/AnalogClock/AnalogClock";
 
 function App() {
   return (
     <Container>
-      <ProgressBarInParellel />
+      <div className="flex justify-center items-center h-screen">
+        <AnalogClock />
+      </div>
     </Container>
   );
 }

@@ -1,0 +1,17 @@
+.clock {
+  position: relative;
+  border: 1px solid black;
+  width: 40vw;
+  height: 40vw;
+  border-radius: 50%;
+}
+
+.clock-hand {
+  background-color: #ccc;
+  position: absolute;
+  top: calc(40vw / 2);
+  left: calc(40vw / 2);
+  width: 1px;
+  height: calc(40vw / 2);
+  transform-origin: top center;
+}
