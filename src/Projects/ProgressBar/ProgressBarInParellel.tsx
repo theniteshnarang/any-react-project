@@ -1,25 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-
-interface Bar {
-  id: number;
-  value: number;
-  max: number;
-  isFilled: boolean;
-}
+import { Bar } from "./ProgressBarInSeries";
+import { NEW_BAR } from "./constant";
 
 let BAR_ID = 0;
 
-const NEW_BAR = {
-  VALUE: 0,
-  MAX: 100,
-};
+interface BarValueId {
+  [x: number]: NodeJS.Timeout;
+}
 
-const ProgressBar = () => {
+const ProgressBarInParellel = () => {
   const [bars, setBars] = useState<Bar[]>([]);
-  const barValueId = useRef<NodeJS.Timeout>();
-  const secondsId = useRef<NodeJS.Timeout>();
-  const [seconds, setSeconds] = useState<number>(0);
   const renderCount = useRef(0);
+  const barValueId = useRef<BarValueId>({});
 
   renderCount.current += 1;
 
@@ -49,36 +41,28 @@ const ProgressBar = () => {
   };
 
   const onClickAddBar = () => {
-    addNewBar();
-    if (secondsId.current) {
-      clearInterval(secondsId.current);
-    }
-    secondsId.current = setInterval(() => {
-      setSeconds((p) => p + 1);
-    }, 1000);
+    const addedBar = addNewBar();
+
+    barValueId.current[addedBar.id] = setInterval(() => {
+      increaseBarValue(addedBar.id);
+    }, 200);
   };
+
+  console.log({ bars, barValueId });
 
   useEffect(() => {
     if (bars) {
-      const matchedBarIndex = bars?.findIndex((bar) => !bar.isFilled);
-      const matchedBar = bars[matchedBarIndex];
-      if (matchedBar && !matchedBar.isFilled) {
-        clearInterval(barValueId.current);
-        barValueId.current = setInterval(() => {
-          increaseBarValue(matchedBar.id);
-        }, 200);
-      }
-
-      if (matchedBarIndex === -1) {
-        clearInterval(barValueId.current);
-        clearInterval(secondsId.current);
-      }
+      Object.keys(barValueId.current).forEach((val) => {
+        const bar = bars.find((b) => b.id === +val);
+        if (bar?.id && bar.isFilled) {
+          clearInterval(barValueId.current[bar?.id]);
+        }
+      });
     }
   }, [bars]);
 
   return (
     <>
-      <p>Time Elapsed: {seconds} seconds</p>
       <p>Render Count: {renderCount.current}</p>
       <button
         onClick={onClickAddBar}
@@ -100,4 +84,4 @@ const ProgressBar = () => {
   );
 };
 
-export default ProgressBar;
+export default ProgressBarInParellel;

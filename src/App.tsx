@@ -1,10 +1,11 @@
 import { Container } from "./layout";
-import ProgressBar from "./Projects/ProgressBar/ProgressBar";
+import ProgressBarInParellel from "./Projects/ProgressBar/ProgressBarInParellel";
+// import ProgressBarInSeries from "./Projects/ProgressBar/ProgressBarInSeries";
 
 function App() {
   return (
     <Container>
-      <ProgressBar />
+      <ProgressBarInParellel />
     </Container>
   );
 }
